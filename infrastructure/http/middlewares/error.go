@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/CamiloAvelar/go-user-service/domain/errors"
@@ -25,9 +26,10 @@ func ErrorMiddleware(next http.Handler) http.Handler {
 					httpError := errors.HttpError{
 						Error: errors.HttpErrorObject{
 							Type:    "Unexpected",
-							Message: e.Error(),
+							Message: "Unexpected application error",
 						},
 					}
+					fmt.Println(e.Error())
 					w.WriteHeader(500)
 					json.NewEncoder(w).Encode(httpError)
 				}

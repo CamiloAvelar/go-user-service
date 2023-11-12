@@ -10,8 +10,9 @@ func (repository repository) Create(
 	userRequest userdto.CreateUserRequest,
 ) (int64, error) {
 	result, err := repository.db.Exec(
-		"INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+		"INSERT INTO users (name, document, email, password) VALUES (?, ?, ?, ?)",
 		userRequest.Name,
+		userRequest.Document,
 		userRequest.Email,
 		userRequest.Password,
 	)

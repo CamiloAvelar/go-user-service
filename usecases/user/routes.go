@@ -11,4 +11,8 @@ func SetupRoutes(i infrainterfaces.Router) {
 	routes.HandleFunc("/create",
 		userinjections.CreateHandler(i.Injections),
 	).Methods("POST")
+
+	routes.HandleFunc("/login",
+		userinjections.LoginHandler(i.Injections),
+	).Methods("POST")
 }

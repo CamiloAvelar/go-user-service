@@ -11,8 +11,7 @@ func (handler handler) Create(response http.ResponseWriter, request *http.Reques
 	createUserRequest := userdto.CreateUserRequest{}
 
 	if err := json.NewDecoder(request.Body).Decode(&createUserRequest); err != nil {
-		response.WriteHeader(500)
-		response.Write([]byte(err.Error()))
+		panic(err)
 	}
 
 	user, err := handler.usecase.Create(createUserRequest)

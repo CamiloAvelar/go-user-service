@@ -12,3 +12,10 @@ func CreateHandler(i infrainterfaces.HttpServerInjections) func(w http.ResponseW
 			Create(w, r)
 	}
 }
+
+func LoginHandler(i infrainterfaces.HttpServerInjections) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		setupUserInjections(i).
+			Login(w, r)
+	}
+}
