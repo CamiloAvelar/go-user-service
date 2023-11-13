@@ -1,8 +1,6 @@
 package encryption
 
 import (
-	"fmt"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,7 +14,6 @@ type Password struct {
 }
 
 func (p Password) Encrypt() (string, error) {
-	fmt.Println(p.Password)
 	hash, err := bcrypt.GenerateFromPassword([]byte(p.Password), 10)
 
 	if err != nil {
@@ -27,11 +24,5 @@ func (p Password) Encrypt() (string, error) {
 }
 
 func (p Password) Compare(hashed string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(hashed), []byte(p.Password))
-
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(p.Password))
 }

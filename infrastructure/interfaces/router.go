@@ -5,6 +5,6 @@ import (
 )
 
 type Router struct {
-	Injections HttpServerInjections
+	Injections ServerInjections
 	Router     *mux.Router
 }

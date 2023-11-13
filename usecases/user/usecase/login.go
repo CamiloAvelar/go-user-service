@@ -1,13 +1,13 @@
 package userusecase
 
 import (
+	"github.com/CamiloAvelar/go-user-service/domain"
 	"github.com/CamiloAvelar/go-user-service/domain/errors"
-	userdto "github.com/CamiloAvelar/go-user-service/usecases/user/dto"
 )
 
-func (usecase usecase) Login(loginUserRequest userdto.LoginUserRequest) (userdto.LoginUserResponse, error) {
+func (usecase usecase) Login(loginUserRequest domain.Login) (*domain.LoginResponse, error) {
 	if err := loginUserRequest.Validate(); err != nil {
-		return userdto.LoginUserResponse{}, err
+		return nil, err
 	}
 
 	user, err := usecase.repository.
@@ -17,11 +17,11 @@ func (usecase usecase) Login(loginUserRequest userdto.LoginUserRequest) (userdto
 		)
 
 	if err != nil {
-		return userdto.LoginUserResponse{}, err
+		return nil, err
 	}
 
-	if user.ID == 0 {
-		return userdto.LoginUserResponse{}, &errors.ApplicationError{
+	if err := user.ValidatePersisted(); err != nil {
+		return nil, &errors.ApplicationError{
 			Type:       "Invalid",
 			Message:    "Invalid credentials",
 			StatusCode: 400,
@@ -29,21 +29,23 @@ func (usecase usecase) Login(loginUserRequest userdto.LoginUserRequest) (userdto
 	}
 
 	if ok := loginUserRequest.ComparePassword(user.Password); !ok {
-		return userdto.LoginUserResponse{}, &errors.ApplicationError{
+		return nil, &errors.ApplicationError{
 			Type:       "Invalid",
 			Message:    "Invalid credentials",
 			StatusCode: 400,
 		}
 	}
 
-	token, err := loginUserRequest.
+	loginUser := domain.Login{User: user}
+
+	token, err := loginUser.
 		CreateAccessToken(usecase.config.AccessTokenSecret, usecase.config.AccessTokenExp)
 
 	if err != nil {
-		return userdto.LoginUserResponse{}, err
+		return nil, err
 	}
 
-	return userdto.LoginUserResponse{
+	return &domain.LoginResponse{
 		AccessToken: token,
 	}, nil
 }

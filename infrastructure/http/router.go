@@ -22,7 +22,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Not Found\n"))
 }
 
-func GetRouter(i infrainterfaces.HttpServerInjections) *mux.Router {
+func GetRouter(i infrainterfaces.ServerInjections) *mux.Router {
 	r := mux.NewRouter()
 
 	r.Use(middlewares.ContentTypeApplicationJsonMiddleware)

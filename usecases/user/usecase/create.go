@@ -1,11 +1,11 @@
 package userusecase
 
 import (
+	"github.com/CamiloAvelar/go-user-service/domain"
 	"github.com/CamiloAvelar/go-user-service/domain/errors"
-	userdto "github.com/CamiloAvelar/go-user-service/usecases/user/dto"
 )
 
-func (usecase usecase) Create(createUserRequest userdto.CreateUserRequest) (int64, error) {
+func (usecase usecase) Create(createUserRequest domain.User) (int64, error) {
 	if err := createUserRequest.Validate(); err != nil {
 		return 0, err
 	}

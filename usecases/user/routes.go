@@ -9,10 +9,10 @@ func SetupRoutes(i infrainterfaces.Router) {
 	routes := i.Router.PathPrefix("/user").Subrouter()
 
 	routes.HandleFunc("/create",
-		userinjections.CreateHandler(i.Injections),
+		userinjections.CreateHttpHandler(i.Injections),
 	).Methods("POST")
 
 	routes.HandleFunc("/login",
-		userinjections.LoginHandler(i.Injections),
+		userinjections.LoginHttpHandler(i.Injections),
 	).Methods("POST")
 }

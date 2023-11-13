@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
@@ -12,7 +14,7 @@ import (
 
 	"github.com/CamiloAvelar/go-user-service/infrastructure/config"
 	"github.com/CamiloAvelar/go-user-service/infrastructure/database/mysql"
-	"github.com/CamiloAvelar/go-user-service/infrastructure/http"
+	serverHttp "github.com/CamiloAvelar/go-user-service/infrastructure/http"
 	infrainterfaces "github.com/CamiloAvelar/go-user-service/infrastructure/interfaces"
 )
 
@@ -20,25 +22,28 @@ func main() {
 	config := config.GetConfig()
 	db := mysql.GetConnection(config)
 
-	httpInjections := infrainterfaces.HttpServerInjections{
+	serverInjections := infrainterfaces.ServerInjections{
 		Config: config,
 		Db:     db,
 	}
 
-	s := http.Get(httpInjections)
-	server := s.Server
+	s := serverHttp.GetServer(serverInjections)
 
 	go func() {
 		log.Println("Starting Server")
-		if err := server.ListenAndServe(); err != nil {
-			log.Fatal(err)
+		if err := s.ListenAndServe(); err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				log.Println("Server closed")
+			} else {
+				log.Printf("Server error: %v\n", err.Error())
+			}
 		}
 	}()
 
 	gracefulShutdown(s, db)
 }
 
-func gracefulShutdown(s http.Server, db *sql.DB) {
+func gracefulShutdown(s serverHttp.Server, db *sql.DB) {
 	var wg sync.WaitGroup
 
 	interruptChan := make(chan os.Signal, 1)
@@ -51,13 +56,19 @@ func gracefulShutdown(s http.Server, db *sql.DB) {
 
 	log.Println("Shutting down")
 
-	s.WaitShutdown(ctx)
+	if err := s.WaitShutdown(ctx); err != nil {
+		log.Println(err.Error())
+	}
 
 	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		db.Close()
-	}()
+	go func(swg *sync.WaitGroup) {
+		defer swg.Done()
+		if err := db.Close(); err != nil {
+			log.Printf("Database close error: %v\n", err.Error())
+		} else {
+			log.Println("Database closed")
+		}
+	}(&wg)
 
 	wg.Wait()
 

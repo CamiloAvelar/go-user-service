@@ -3,11 +3,11 @@ package userrepository
 import (
 	"fmt"
 
-	userdto "github.com/CamiloAvelar/go-user-service/usecases/user/dto"
+	"github.com/CamiloAvelar/go-user-service/domain"
 )
 
 func (repository repository) Create(
-	userRequest userdto.CreateUserRequest,
+	userRequest domain.User,
 ) (int64, error) {
 	result, err := repository.db.Exec(
 		"INSERT INTO users (name, document, email, password) VALUES (?, ?, ?, ?)",

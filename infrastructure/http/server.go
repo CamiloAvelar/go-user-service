@@ -9,16 +9,16 @@ import (
 )
 
 type Server interface {
-	WaitShutdown(ctx context.Context)
+	WaitShutdown(ctx context.Context) error
 }
 
 type httpServer struct {
-	Server *http.Server
+	http.Server
 }
 
-func Get(i infrainterfaces.HttpServerInjections) *httpServer {
+func GetServer(i infrainterfaces.ServerInjections) *httpServer {
 	return &httpServer{
-		Server: &http.Server{
+		http.Server{
 			Handler:      GetRouter(i),
 			Addr:         i.Config.ServerPort,
 			ReadTimeout:  10 * time.Second,
@@ -27,6 +27,6 @@ func Get(i infrainterfaces.HttpServerInjections) *httpServer {
 	}
 }
 
-func (s *httpServer) WaitShutdown(ctx context.Context) {
-	s.Server.Shutdown(ctx)
+func (s *httpServer) WaitShutdown(ctx context.Context) error {
+	return s.Shutdown(ctx)
 }

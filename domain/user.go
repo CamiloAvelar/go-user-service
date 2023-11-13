@@ -2,9 +2,14 @@ package domain
 
 import (
 	"net/http"
-
-	userdto "github.com/CamiloAvelar/go-user-service/usecases/user/dto"
 )
+
+type UserInterface interface {
+	Validate() error
+	ValidatePersisted() error
+	EncryptPassword() error
+	ComparePassword(p string) bool
+}
 
 type User struct {
 	ID       int64  `json:"id"`
@@ -15,16 +20,16 @@ type User struct {
 }
 
 type UserRepository interface {
-	Create(userRequest userdto.CreateUserRequest) (int64, error)
+	Create(userRequest User) (int64, error)
 	FindByEmailOrDocument(email, document string) (User, error)
 }
 
 type UserUseCase interface {
-	Create(userRequest userdto.CreateUserRequest) (int64, error)
-	Login(loginRequest userdto.LoginUserRequest) (userdto.LoginUserResponse, error)
+	Create(userRequest User) (int64, error)
+	Login(loginRequest Login) (*LoginResponse, error)
 }
 
 type UserHandler interface {
-	Create(response http.ResponseWriter, request *http.Request)
-	Login(response http.ResponseWriter, request *http.Request)
+	CreateHttp(response http.ResponseWriter, request *http.Request)
+	LoginHttp(response http.ResponseWriter, request *http.Request)
 }
