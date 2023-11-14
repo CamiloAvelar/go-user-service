@@ -8,8 +8,8 @@ import (
 	userusecase "github.com/CamiloAvelar/go-user-service/usecases/user/usecase"
 )
 
-func setupUserInjections(i infrainterfaces.ServerInjections) domain.UserHandler {
+func setupUserInjections(i *infrainterfaces.ServerInjections) domain.UserHandler {
 	userRepository := userrepository.New(i.Db)
-	userUsecase := userusecase.New(userRepository, i.Config)
+	userUsecase := userusecase.New(userRepository, i.Config, i.User)
 	return userhandler.New(userUsecase)
 }

@@ -5,6 +5,6 @@ import (
 	"github.com/CamiloAvelar/go-user-service/usecases/user"
 )
 
-func SetupRoutes(r infrainterfaces.Router) {
+func SetupRoutes(r *infrainterfaces.Router) {
 	user.SetupRoutes(r)
 }

@@ -1,7 +1,11 @@
 package domain
 
 type LoginResponse struct {
-	AccessToken string `json:"access_token"`
+	TokenType        string `json:"token_type"`
+	AccessToken      string `json:"access_token"`
+	RefreshToken     string `json:"refresh_token"`
+	AccessExpiresAt  int64  `json:"access_token_expires_at"`
+	RefreshExpiresAt int64  `json:"refresh_token_expires_at"`
 }
 
 type Login struct {

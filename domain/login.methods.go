@@ -25,7 +25,7 @@ func (l Login) Validate() error {
 	return nil
 }
 
-func (l Login) CreateAccessToken(s string, e int64) (string, error) {
+func (l Login) CreateAccessToken(s string, e int64) (encryption.AccessToken, error) {
 	tokenInformations := encryption.Token{
 		ID:     l.ID,
 		Name:   l.Name,
@@ -36,7 +36,7 @@ func (l Login) CreateAccessToken(s string, e int64) (string, error) {
 	token, err := tokenInformations.CreateAccessToken()
 
 	if err != nil {
-		return "", err
+		return encryption.AccessToken{}, err
 	}
 
 	return token, nil

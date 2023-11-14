@@ -16,7 +16,7 @@ type httpServer struct {
 	http.Server
 }
 
-func GetServer(i infrainterfaces.ServerInjections) *httpServer {
+func GetServer(i *infrainterfaces.ServerInjections) *httpServer {
 	return &httpServer{
 		http.Server{
 			Handler:      GetRouter(i),

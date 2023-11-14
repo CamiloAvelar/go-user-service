@@ -30,3 +30,25 @@ func (repository repository) FindByEmailOrDocument(
 
 	return user, nil
 }
+
+func (repository repository) FindByID(
+	id int64,
+) (domain.User, error) {
+	var user domain.User
+
+	err := repository.db.
+		QueryRow("SELECT id, name, document, email, password FROM users WHERE id = ?",
+			id,
+		).
+		Scan(&user.ID, &user.Name, &user.Document, &user.Email, &user.Password)
+
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return domain.User{}, nil
+		}
+
+		return domain.User{}, err
+	}
+
+	return user, nil
+}

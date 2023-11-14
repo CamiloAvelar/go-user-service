@@ -22,6 +22,7 @@ type User struct {
 type UserRepository interface {
 	Create(userRequest User) (int64, error)
 	FindByEmailOrDocument(email, document string) (User, error)
+	FindByID(id int64) (User, error)
 }
 
 type UserUseCase interface {

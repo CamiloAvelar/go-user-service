@@ -27,7 +27,7 @@ func main() {
 		Db:     db,
 	}
 
-	s := serverHttp.GetServer(serverInjections)
+	s := serverHttp.GetServer(&serverInjections)
 
 	go func() {
 		log.Println("Starting Server")

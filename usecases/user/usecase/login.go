@@ -45,7 +45,18 @@ func (usecase usecase) Login(loginUserRequest domain.Login) (*domain.LoginRespon
 		return nil, err
 	}
 
+	rtoken, err := loginUser.
+		CreateAccessToken(usecase.config.RefreshTokenSecret, usecase.config.RefreshTokenExp)
+
+	if err != nil {
+		return nil, err
+	}
+
 	return &domain.LoginResponse{
-		AccessToken: token,
+		TokenType:        "Bearer",
+		AccessToken:      token.Hash,
+		RefreshToken:     rtoken.Hash,
+		AccessExpiresAt:  token.ExpiresAt,
+		RefreshExpiresAt: rtoken.ExpiresAt,
 	}, nil
 }

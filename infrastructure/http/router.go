@@ -9,12 +9,20 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func healthHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+func healthHandler(i infrainterfaces.ServerInjections) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := i.Db.Ping(); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+	}
 }
 
-func readinessHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
+func readinessHandler(i infrainterfaces.ServerInjections) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}
 }
 
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +30,7 @@ func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Not Found\n"))
 }
 
-func GetRouter(i infrainterfaces.ServerInjections) *mux.Router {
+func GetRouter(i *infrainterfaces.ServerInjections) *mux.Router {
 	r := mux.NewRouter()
 
 	r.Use(middlewares.ContentTypeApplicationJsonMiddleware)
@@ -30,15 +38,15 @@ func GetRouter(i infrainterfaces.ServerInjections) *mux.Router {
 
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
-	r.HandleFunc("/health", healthHandler)
-	r.HandleFunc("/readiness", readinessHandler)
+	r.HandleFunc("/health", healthHandler(*i))
+	r.HandleFunc("/readiness", readinessHandler(*i))
 
 	router := infrainterfaces.Router{
 		Injections: i,
 		Router:     r,
 	}
 
-	bootstrap.SetupRoutes(router)
+	bootstrap.SetupRoutes(&router)
 
 	return r
 }
