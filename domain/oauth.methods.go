@@ -2,7 +2,6 @@ package domain
 
 import (
 	"github.com/CamiloAvelar/go-user-service/domain/errors"
-	"github.com/CamiloAvelar/go-user-service/infrastructure/encryption"
 )
 
 func (l Login) Validate() error {
@@ -25,19 +24,19 @@ func (l Login) Validate() error {
 	return nil
 }
 
-func (l Login) CreateAccessToken(s string, e int64) (encryption.AccessToken, error) {
-	tokenInformations := encryption.Token{
-		ID:     l.ID,
-		Name:   l.Name,
-		Secret: s,
-		Expiry: e,
-	}
+// func (l Login) CreateAccessToken(s string, e int64) (encryption.AccessToken, error) {
+// 	tokenInformations := encryption.Token{
+// 		ID:     l.ID,
+// 		Name:   l.Name,
+// 		Secret: s,
+// 		Expiry: e,
+// 	}
 
-	token, err := tokenInformations.CreateAccessToken()
+// 	token, err := tokenInformations.CreateAccessToken()
 
-	if err != nil {
-		return encryption.AccessToken{}, err
-	}
+// 	if err != nil {
+// 		return encryption.AccessToken{}, err
+// 	}
 
-	return token, nil
-}
+// 	return token, nil
+// }

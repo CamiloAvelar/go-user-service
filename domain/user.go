@@ -27,10 +27,8 @@ type UserRepository interface {
 
 type UserUseCase interface {
 	Create(userRequest User) (int64, error)
-	Login(loginRequest Login) (*LoginResponse, error)
 }
 
 type UserHandler interface {
 	CreateHttp(response http.ResponseWriter, request *http.Request)
-	LoginHttp(response http.ResponseWriter, request *http.Request)
 }

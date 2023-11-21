@@ -14,17 +14,22 @@ import (
 
 	"github.com/CamiloAvelar/go-user-service/infrastructure/config"
 	"github.com/CamiloAvelar/go-user-service/infrastructure/database/mysql"
+	"github.com/CamiloAvelar/go-user-service/infrastructure/database/session"
 	serverHttp "github.com/CamiloAvelar/go-user-service/infrastructure/http"
+	"github.com/CamiloAvelar/go-user-service/infrastructure/http/oauth2"
 	infrainterfaces "github.com/CamiloAvelar/go-user-service/infrastructure/interfaces"
 )
 
 func main() {
 	config := config.GetConfig()
 	db := mysql.GetConnection(config)
+	srv := oauth2.GetServer(db, config)
+	session.SetStore(db)
 
 	serverInjections := infrainterfaces.ServerInjections{
-		Config: config,
-		Db:     db,
+		Config:   config,
+		Db:       db,
+		OauthSrv: srv,
 	}
 
 	s := serverHttp.GetServer(&serverInjections)

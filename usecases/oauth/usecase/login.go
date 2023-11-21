@@ -1,4 +1,4 @@
-package userusecase
+package oauthusecase
 
 import (
 	"github.com/CamiloAvelar/go-user-service/domain"
@@ -36,27 +36,7 @@ func (usecase usecase) Login(loginUserRequest domain.Login) (*domain.LoginRespon
 		}
 	}
 
-	loginUser := domain.Login{User: user}
-
-	token, err := loginUser.
-		CreateAccessToken(usecase.config.AccessTokenSecret, usecase.config.AccessTokenExp)
-
-	if err != nil {
-		return nil, err
-	}
-
-	rtoken, err := loginUser.
-		CreateAccessToken(usecase.config.RefreshTokenSecret, usecase.config.RefreshTokenExp)
-
-	if err != nil {
-		return nil, err
-	}
-
 	return &domain.LoginResponse{
-		TokenType:        "Bearer",
-		AccessToken:      token.Hash,
-		RefreshToken:     rtoken.Hash,
-		AccessExpiresAt:  token.ExpiresAt,
-		RefreshExpiresAt: rtoken.ExpiresAt,
+		User: user,
 	}, nil
 }
